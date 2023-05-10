@@ -127,6 +127,35 @@ void borrow_book() {
         printf("\nTidak ditemukan buku dengan judul %s.\n\n", search_title);
 }
 }
+// Fungsi untuk mengembalikan buku
+void return_book() {
+FILE *f_struktur = fopen("pp.txt", "a+");
+if (f_struktur == NULL) {
+    printf("File not found, please try again\n");}
+char search_title[50];
+printf("-----------------------------------------\n");
+printf("|            Kembalikan Buku            |\n");
+printf("-----------------------------------------\n");
+printf("Perhatikan Untuk Mencari Dengan Huruf Besar Pada Awal Setiap Suku kata Dan Menggunakan '_' Untuk Setiap Spasi\n");
+printf("Judul: ");
+scanf("%s", search_title);
+int found = 0;
+for (int i = 0; i < tersedia; i++) {
+if (strcmp(books[i].Judul, search_title) == 0) {
+if (books[i].pinjam == 1) {
+books[i].pinjam = 0;
+printf("\nBuku %s berhasil dikembalikan.\n\n", books[i].Judul);
+} else {
+printf("\nBuku %s tidak sedang dipinjam.\n\n", books[i].Judul);
+}
+found = 1;
+break;
+}
+}
+if (!found) {
+printf("\nTidak ditemukan buku dengan judul %s.\n\n", search_title);
+}
+}
 
 // Fungsi utama
 int main() {
