@@ -1,0 +1,172 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_BOOKS 50 // Batas maksimum jumlah buku
+// Definisi struktur data buku
+struct Book {
+    char Judul[50];
+    char Penulis[50];
+    char Penerbit[50];
+    int tahun;
+    int hal;
+    int pinjam;
+};
+
+// Deklarasi array untuk menyimpan data buku
+struct Book books[MAX_BOOKS];
+
+// Deklarasi variabel untuk menghitung jumlah buku yang tersedia
+int tersedia = 0;
+
+// Fungsi untuk menambah buku
+void add_book() {
+    char jawaban;
+    int sudah_benar;
+    int pil;
+    printf("Halaman ini hanya untuk pegawai perpustakaan. Silahkan masukkan ID code pegawai untuk masuk\n");
+    printf("ID CODE: ");
+    scanf("%d", &pil);
+    if (pil == 133){
+    FILE *f_struktur = fopen("pp.txt", "a");
+    if (f_struktur == NULL) {
+        printf("File not found, please try again!\n");
+        return;
+    }
+    printf("Tambah Buku\n");
+    printf("-----------\n");
+    do {
+        struct Book new_book;
+        printf("Judul: ");
+        scanf("%s", new_book.Judul);
+        printf("Pengarang: ");
+        scanf("%s", new_book.Penulis);
+        printf("Penerbit: ");
+        scanf("%s", new_book.Penerbit);
+        printf("Tahun Terbit: ");
+        scanf("%d", &new_book.tahun);
+        printf("Jumlah Halaman: ");
+        scanf("%d", &new_book.hal);
+        new_book.pinjam = 0;
+        books[tersedia] = new_book;
+        tersedia++;
+        fwrite(&new_book, sizeof(new_book), 1, f_struktur);
+        printf("\nBuku berhasil ditambahkan.\n\n");
+        fflush(stdin);
+        printf("Mau merekam data lagi [Y/T] ?");
+        do {
+jawaban = getchar();
+sudah_benar = ((jawaban == 'Y') || (jawaban ==
+'y')||(jawaban == 'T') || (jawaban == 't'));
+} while(!sudah_benar);
+
+printf("\n");
+
+} while(jawaban == 'Y' || jawaban == 'y');
+    fclose(f_struktur);
+}
+}
+// Fungsi untuk mencari buku berdasarkan judul
+void search_book() {
+    FILE *f_struktur = fopen("pp.txt", "a+");
+    if (f_struktur == NULL) {
+        printf("File not found, please try again!\n");
+        return;
+    }
+    char search_title[50];
+    printf("-------------------------------------------\n");
+    printf("|              Cari Buku                  |\n");
+    printf("-------------------------------------------\n");
+    printf("Judul: ");
+    scanf("%s", search_title);
+    int found = 0;
+    while (fread(&books[found], sizeof(struct Book), 1, f_struktur)) {
+        if (strcmp(books[found].Judul, search_title) == 0) {
+            printf("\nJudul buku: %s\n", books[found].Judul);
+            printf("Pengarang: %s\n", books[found].Penulis);
+            printf("Penerbit: %s\n", books[found].Penerbit);
+            printf("Tahun terbit: %d\n", books[found].tahun);
+            printf("Jumlah halaman: %d\n", books[found].hal);
+            printf("Status: %s\n\n", books[found].pinjam == 0 ? "Tersedia" : "Dipinjam");
+            found = 1;
+            break;
+        }
+    }
+    if (!found) {
+        printf("\nTidak ditemukan buku dengan judul %s.\n\n", search_title);
+    }
+    fclose(f_struktur);
+}
+
+// Fungsi untuk meminjam buku
+void borrow_book() {
+    FILE *f_struktur = fopen("pp.txt", "a+");
+    if (f_struktur == NULL) {
+        printf("File not found, please try again\n");}
+    
+    char search_title[50];
+    printf("-----------------------------------------\n");
+    printf("|              Pinjam Buku              |\n");
+    printf("-----------------------------------------\n");
+    printf("Perhatikan Untuk Mencari Dengan Huruf Besar Pada Awal Setiap Suku kata Dan Menggunakan '_' Untuk Setiap Spasi\n");
+    printf("Judul: ");
+    scanf("%s", search_title);
+    int found = 0;
+    for (int i = 0; i < tersedia; i++) {
+        if (strcmp(books[i].Judul, search_title) == 0) {
+            if (books[i].pinjam == 0) {
+                books[i].pinjam = 1;
+                printf("\nBuku %s berhasil dipinjam.\n\n", books[i].Judul);
+            } else {
+                printf("\nBuku %s sedang dipinjam.\n\n", books[i].Judul);
+            }
+            found = 1;
+            break;
+        }
+    }
+    if (!found) {
+        printf("\nTidak ditemukan buku dengan judul %s.\n\n", search_title);
+}
+}
+
+// Fungsi utama
+int main() {
+FILE *f_struktur;
+char jawaban;
+int sudah_benar;
+int option;
+do {
+printf("\n\n");
+printf("******************************************************\n");
+printf("||          SELAMAT DATANG  DI E-LIBRARY USK        ||\n");
+printf("******************************************************\n");
+printf("Pilih opsi:\n");
+printf("1. Tambah Buku\n");
+printf("2. Cari Buku\n");
+printf("3. Pinjam Buku\n");
+printf("4. Kembalikan Buku\n");
+printf("5. Keluar\n");
+printf("Opsi: ");
+scanf("%d", &option);
+switch (option) {
+case 1:
+add_book();
+break;
+case 2:
+search_book();
+break;
+case 3:
+borrow_book();
+break;
+case 4:
+return_book();
+break;
+case 5:
+printf("Terima kasih telah menggunakan program ini.\n");
+break;
+default:
+printf("Opsi tidak valid. Silakan coba lagi.\n");
+break;
+}
+} while (option != 5);
+return 0;
+}
