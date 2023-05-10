@@ -190,7 +190,9 @@ case 4:
 return_book();
 break;
 case 5:
-printf("Terima kasih telah menggunakan program ini.\n");
+printf("******************************************************\n");
+printf("||                  SEE YOU READERS                 ||\n");
+printf("******************************************************\n");
 break;
 default:
 printf("Opsi tidak valid. Silakan coba lagi.\n");
